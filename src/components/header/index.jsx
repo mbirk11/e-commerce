@@ -87,9 +87,24 @@ const Header = () => {
               </div>
               <span className="text-sm font-medium">Cart</span>
             </div>
+
             <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md  py-2 px-4 hover:bg-gray-100">
               {isAuthed && (
-                <span className="text-sm font-medium ">{userName}</span>
+                <>
+                  <svg
+                    className="h-5 w-5 text-red-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />{" "}
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span className="text-sm font-medium ">{userName}</span>
+                </>
               )}
             </div>
 
