@@ -1,3 +1,4 @@
+eslint-disable-next-line React/prop-types;
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
