@@ -1,6 +1,7 @@
 /** @format */
 import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/authContextProvider";
+import { Link, NavLink } from "react-router-dom";
 const LogIn = () => {
   const [inputValue, setInputValue] = useState({
     email: "",
@@ -70,6 +71,11 @@ const LogIn = () => {
             >
               Log in
             </button>
+            <Link to={"/register"}>
+              <div className="text-center text-1xl mb-6 text-blue-500 font-bold font-sans">
+                Register Here
+              </div>
+            </Link>
           </form>
         </div>
       </div>

@@ -1,12 +1,14 @@
 /** @format */
 
+import Footer from "../../components/footer";
 import Header from "../../components/header";
 
 const Products = () => {
   return (
     <>
-      <div>Products</div>
       <Header />
+      <div>Products</div>
+      <Footer />
     </>
   );
 };

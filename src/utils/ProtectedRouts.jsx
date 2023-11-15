@@ -1,10 +1,13 @@
 /** @format */
 
+import { useContext } from "react";
 import { Navigate, Outlet } from "react-router";
+import { AuthContext } from "../providers/authContextProvider";
 
 const ProtectedRouts = () => {
-  let auth = { token: true };
-  return auth.token ? <Outlet /> : <Navigate to="/login" />;
+  const { authToken } = useContext(AuthContext);
+  const isAuthed = authToken && authToken.token;
+  return isAuthed ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRouts;
