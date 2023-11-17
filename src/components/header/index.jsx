@@ -1,7 +1,8 @@
 /** @format */
 import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/authContextProvider";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [searchItem, setSearchItem] = useState("");
@@ -9,7 +10,9 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { isAuthed, user } = authToken;
+  console.log(authToken);
   const userName = user ? user.name : "";
+  const userId = user ? user.id : null;
   const handleAuth = () => {
     if (isAuthed) {
       logOut();
@@ -103,7 +106,9 @@ const Header = () => {
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />{" "}
                     <circle cx="12" cy="7" r="4" />
                   </svg>
-                  <span className="text-sm font-medium ">{userName}</span>
+                  <Link to={`/user/${userId}`}>
+                    <span className="text-sm font-medium ">{userName}</span>
+                  </Link>
                 </>
               )}
             </div>

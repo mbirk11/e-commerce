@@ -37,7 +37,7 @@ const LogIn = () => {
                 type="text"
                 name="email"
                 id="email"
-                placeholder="@email"
+                placeholder="email"
                 value={inputValue.email}
                 onChange={(e) => {
                   setInputValue({ ...inputValue, email: e.target.value });

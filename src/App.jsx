@@ -10,6 +10,7 @@ import ContactUs from "./pages/contactUs";
 import AboutUs from "./pages/aboutUs";
 import AuthContextProvider from "./providers/authContextProvider";
 import Register from "./pages/register";
+import UserProfile from "./pages/profile/userProfile";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/" element={<Home />} />
         <Route path="/" element={<ProtectedRouts />}>
+          <Route path="user/:id" element={<UserProfile />}></Route>
           <Route path="/products" element={<Products />}></Route>
         </Route>
       </Routes>
