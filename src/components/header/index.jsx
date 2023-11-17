@@ -10,7 +10,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { isAuthed, user } = authToken;
-  console.log(authToken);
   const userName = user ? user.name : "";
   const userId = user ? user.id : null;
   const handleAuth = () => {
