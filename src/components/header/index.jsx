@@ -1,17 +1,61 @@
 /** @format */
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/authContextProvider";
-import { useNavigate, useParams } from "react-router";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
+import { Link, NavLink } from "react-router-dom";
+import Api from "../../utils/Api";
+import { CategoryContext } from "../../providers/categoryContextProvider";
 
 const Header = () => {
+  const { onChangeCategory, setSelectedCategoryProducts } =
+    useContext(CategoryContext);
   const [searchItem, setSearchItem] = useState("");
   const { authToken, logOut } = useContext(AuthContext);
+  const [dropdown, setDropdown] = useState(false);
   const navigate = useNavigate();
+  const toggleDropDown = () => {
+    setDropdown(!dropdown);
+  };
 
   const { isAuthed, user } = authToken;
-  const userName = user ? user.name : "";
+  const userName = user ? user.username : "";
   const userId = user ? user.id : null;
+  // useEffect(() => {
+  //   onSearch();
+  // }, [searchItem]); ძებნა ქლიქის გარეშე
+  const onSearch = async () => {
+    try {
+      const response = await Api(`/products/search?q=${searchItem}`);
+      navigate(`/products?q=${searchItem}`);
+      setSelectedCategoryProducts(response.data.products);
+      console.log(response.data.products);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  //კატეგორიების წამოღება
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await Api(`/products/categories/`);
+
+        const productsCategories = response.data;
+        setCategories(productsCategories);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    fetchCategories();
+  }, []);
+  const indexToShow = [0, 1, 2, 6, 16, 17, 18, 19]; //სასურველი კატეგორიის ჩვენება
+
+  // useEffect(() => {
+  //   if (searchItem) {
+  //     handleSearch();
+  //   }
+  // }, [searchItem]);
+
   const handleAuth = () => {
     if (isAuthed) {
       logOut();
@@ -23,31 +67,11 @@ const Header = () => {
     <div className="bg-white">
       <div className="border py-3 px-6">
         <div className="flex justify-between">
-          <div className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-red-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
-              />
-            </svg>
-            <span className="ml-2 font-semibold text-[#252C32]">
-              What a Market
-            </span>
-          </div>
-
-          <div className="ml-6 flex flex-1 gap-x-3">
-            <div className="flex cursor-pointer select-none items-center gap-x-2 rounded-md border bg-[#4094F7] py-2 px-4 text-white hover:bg-blue-500">
+          <Link to={"/home"}>
+            <div className="flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-6 w-6 text-red-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -56,10 +80,58 @@ const Header = () => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
+                  d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
                 />
               </svg>
-              <span className="text-sm font-medium">Categories</span>
+              <span className="ml-2 font-semibold text-[#252C32]">
+                What a Market
+              </span>
+            </div>
+          </Link>
+          <div className="ml-6 flex flex-1 gap-x-3">
+            <div className="ml-6 flex flex-1 gap-x-3 relative">
+              <div
+                onClick={toggleDropDown}
+                className="flex cursor-pointer select-none items-center gap-x-2 rounded-md border bg-[#4094F7] py-2 px-4 text-white hover:bg-blue-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+                <span className="text-sm font-medium">Categories</span>
+              </div>
+
+              <div
+                className={`hs-dropdown-menu absolute top-full left-0 ${
+                  dropdown ? "opacity-100 visible" : "opacity-0 invisible"
+                } bg-white shadow-md rounded-lg p-2 mt-2 z-10 dark:bg-gray-800 dark:border dark:border-gray-700`}
+              >
+                {categories.map((category, index) => (
+                  <NavLink
+                    key={index}
+                    className={({ isActive }) =>
+                      isActive
+                        ? "flex items-center cursor-pointer gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
+                        : "flex items-center cursor-pointer gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
+                    }
+                    onClick={() => {
+                      onChangeCategory(category);
+                    }}
+                  >
+                    {category}
+                  </NavLink>
+                ))}
+              </div>
             </div>
 
             <input
@@ -70,8 +142,19 @@ const Header = () => {
                 setSearchItem(e.target.value);
               }}
             />
+            <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
+              <Link to={`/products?q=${searchItem}`}>
+                <button
+                  className="text-sm font-medium"
+                  onClick={() => {
+                    onSearch;
+                  }}
+                >
+                  Search
+                </button>
+              </Link>
+            </div>
           </div>
-
           <div className="ml-2 flex">
             <div className="flex cursor-pointer items-center gap-x-1 rounded-md py-2 px-4 hover:bg-gray-100">
               <div className="relative">
@@ -122,30 +205,22 @@ const Header = () => {
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex gap-x-8">
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Best seller
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              New Releases
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Books
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Computers
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Fashion
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Health
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Pharmacy
-            </span>
-            <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
-              Toys & Games
-            </span>
+            {indexToShow.map((index) => (
+              <NavLink
+                // to={`/products/${categories[index]}`}
+                key={index}
+                className={({ isActive }) =>
+                  isActive
+                    ? "cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100"
+                    : "cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-700"
+                }
+                onClick={() => {
+                  onChangeCategory(categories[index], 2, 0);
+                }}
+              >
+                {categories[index]}
+              </NavLink>
+            ))}
           </div>
 
           <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">

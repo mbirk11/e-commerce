@@ -1,166 +1,175 @@
 /** @format */
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
-import axios from "axios";
+import Api from "../../utils/Api";
+import { Link, useLocation } from "react-router-dom";
+import { CategoryContext } from "../../providers/categoryContextProvider";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const location = useLocation();
+  const [currentPage, setCurrentPage] = useState({
+    limit: 10,
+    skip: 0,
+  });
+  const { selectedCategoryProducts } = useContext(CategoryContext);
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => ({
+      ...prevPage,
+      skip: prevPage.skip - prevPage.limit,
+    }));
+  };
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => ({
+      ...prevPage,
+      skip: prevPage.skip + prevPage.limit,
+    }));
+  };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-  async function fetchProducts() {
+  async function fetchProducts(queryParam, page) {
     try {
-      const response = await axios.get("https://dummyjson.com/products");
-      const productData = response.data.products;
-      setProducts(productData);
+      let url = `/products`;
+
+      if (queryParam) {
+        url += `/search?limit=${page.limit}&skip=${page.skip}&q=${queryParam}`;
+      } else {
+        url = `/products?limit=${page.limit}&skip=${page.skip}`;
+      }
+      const response = await Api.get(url);
+      const { products: productData } = response.data;
+      const categorizedProducts = selectedCategoryProducts.length
+        ? selectedCategoryProducts
+        : productData;
+      setProducts(categorizedProducts);
+      console.log(categorizedProducts);
     } catch (e) {
       console.error(e);
     }
   }
 
+  useEffect(() => {
+    const searchData = new URLSearchParams(location.search);
+    const queryParam = searchData.get("q");
+    fetchProducts(queryParam, currentPage);
+  }, [location.search, currentPage.skip, selectedCategoryProducts]);
+
   return (
     <>
       <Header />
-      {/* 
-      <div className="flex flex-wrap bg-gray-100 p-4 ">
-        {products.map((product) => (
-          <div key={product.id}>
-            <div className="flex  bg-gray-100">
-              <div className="max-w-xs cursor-pointer rounded-lg bg-white p-2 shadow duration-150 hover:scale-105 hover:shadow-md aspect-w-16 aspect-h-9 ">
-                <img
-                  className="w-full rounded-lg object-cover aspect-w-16 aspect-h-9"
-                  src={product.images}
-                  alt={product.title}
-                />
-                <p className="my-4 pl-4 font-bold text-gray-500">
-                  {product.title}
-                </p>
-                <p className="mb-4 ml-4 text-xl font-semibold text-gray-800">
-                  Price:{product.price}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div> */}
-      <div
-        tabIndex="0"
-        className="focus:outline-none flex flex-wrap gap-y-5 p-4 bg-gray-100 items-center justify-center"
+
+      <section
+        id="Projects"
+        className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
       >
         {products.map((product) => (
           <div
             key={product.id}
-            className="flex flex-wrap items-center lg:justify-between justify-center "
+            className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
           >
-            <div
-              tabIndex="0"
-              className="focus:outline-none mx-2 w-72 xl:mb-0 mb-8"
-            >
-              <div className="shadow duration-150 hover:scale-105 hover:shadow max-w-xs cursor-pointer ">
-                <img
-                  alt={product.title}
-                  src={product.images[0]}
-                  tabIndex="0"
-                  className="focus:outline-none w-full h-44 rounded-lg"
-                />
-              </div>
-              <div className="bg-white">
-                <div className="flex items-center justify-between px-4 pt-4">
-                  <div>
+            <Link to={`/products/${product.id}`}>
+              <img
+                src={product.images[0]}
+                alt={product.title}
+                className="h-80 w-72 object-contain rounded-t-xl"
+              />
+
+              <div className="px-4 py-3 w-72">
+                <span className="text-gray-400 mr-3 uppercase text-xs">
+                  {product.brand}
+                </span>
+                <p className="text-lg font-bold text-black truncate block capitalize">
+                  {product.title}
+                </p>
+
+                <div className="flex items-center">
+                  <del>
+                    <p className="text-lg font-semibold text-balck cursor-auto my-3">
+                      {product.price}$
+                    </p>
+                  </del>
+
+                  <p className="text-sm text-red-600 cursor-auto ml-2 ">
+                    {product.discountPercentage}%off
+                  </p>
+
+                  <p className="text-sm font-semibold text-green-600  ml-2 cursor-auto my-3">
+                    New Price:
+                    {(
+                      product.price -
+                      (product.price * product.discountPercentage) / 100
+                    ).toFixed(2)}
+                    $
+                  </p>
+
+                  <div className="ml-auto">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      tabIndex="0"
-                      className="focus:outline-none"
                       width="20"
                       height="20"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="#2c3e50"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                      <path d="M9 4h6a2 2 0 0 1 2 2v14l-5-3l-5 3v-14a2 2 0 0 1 2 -2"></path>
-                    </svg>
-                  </div>
-                  <div className="bg-yellow-200 py-1.5  px-6 rounded-full flex justify-between w-full">
-                    <p
-                      tabIndex="0"
-                      className="focus:outline-none text-xs text-yellow-700"
-                    >
-                      Add To Cart
-                    </p>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-yellow-700 "
-                      viewBox="0 0 20 20"
                       fill="currentColor"
+                      className="bi bi-bag-plus"
+                      viewBox="0 0 16 16"
                     >
-                      <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                      <path
+                        fillRule="evenodd"
+                        d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"
+                      />
+                      <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
                     </svg>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center">
-                    <h2
-                      tabIndex="0"
-                      className="focus:outline-none text-lg font-semibold"
-                    >
-                      {product.title}
-                    </h2>
-                    <p
-                      tabIndex="0"
-                      className="focus:outline-none text-xs text-red-600 pl-5"
-                    >
-                      Price:${product.price}
-                    </p>
-                  </div>
-                  <p
-                    tabIndex="0"
-                    className="focus:outline-none text-xs text-gray-600 mt-2"
-                  >
-                    The Apple iPhone XS is available in 3 colors with 64GB
-                    memory. Shoot amazing videos
-                  </p>
-                  <div className="flex mt-4">
-                    <div>
-                      <p
-                        tabIndex="0"
-                        className="focus:outline-none text-xs text-gray-600 px-2 bg-gray-200 py-1"
-                      >
-                        12 months warranty
-                      </p>
-                    </div>
-                    <div className="pl-2">
-                      <p
-                        tabIndex="0"
-                        className="focus:outline-none text-xs text-gray-600 px-2 bg-gray-200 py-1"
-                      >
-                        Complete box
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between py-4">
-                    <h2
-                      tabIndex="0"
-                      className="focus:outline-none text-indigo-700 text-xs font-semibold"
-                    >
-                      Bay Area, San Francisco
-                    </h2>
-                    <h3
-                      tabIndex="0"
-                      className="focus:outline-none text-indigo-700 text-xl font-semibold"
-                    ></h3>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         ))}
+      </section>
+      <div className="flex flex-col items-center pb-8 mt-5">
+        <div className="inline-flex mt-2 xs:mt-0">
+          <button
+            onClick={handlePrevPage}
+            className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            <svg
+              className="w-3.5 h-3.5 me-2 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 10"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeidth="2"
+                d="M13 5H1m0 0 4 4M1 5l4-4"
+              />
+            </svg>
+            Prev
+          </button>
+          <button
+            onClick={handleNextPage}
+            className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            Next
+            <svg
+              className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 10"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeidth="2"
+                d="M1 5h12m0 0L9 1m4 4L9 9"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
       <Footer />
     </>

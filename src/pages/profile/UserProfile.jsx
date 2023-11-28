@@ -1,18 +1,19 @@
 /** @format */
 
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
+import Api from "../../utils/Api";
+import { AuthContext } from "../../providers/authContextProvider";
 
 const UserProfile = () => {
-  const { id } = useParams();
+  const { authToken } = useContext(AuthContext);
+  const id = authToken.user.id;
+
   const [user, setUser] = useState(null);
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get(
-          `https://api.escuelajs.co/api/v1/users/${id}`
-        );
+        const res = await Api.get(`/users/${id}`);
         setUser(res.data);
       } catch (error) {
         console.error("User Data fetching error:", error);
@@ -20,17 +21,18 @@ const UserProfile = () => {
     }
 
     fetchData();
-  }, []);
+  }, [id]);
 
   return (
     <>
       {user ? (
         <div className="flex items-center gap-4">
-          <img className=" w-10 h-10 rounded-full" src={user.avatar} alt="" />
+          <img className=" w-30 h-30 rounded-full" src={user.image} alt="" />
           <div className=" font-medium dark:text-white">
-            <div>Name :{user.name}</div>
+            <div>Last Name :{user.lastName}</div>
+            <div>First Name :{user.firstName}</div>
             <div>Email :{user.email}</div>
-            <div>Role :{user.role}</div>
+            <div>BirthDate:{user.birthDate}</div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
               {user.creationAt}
             </div>

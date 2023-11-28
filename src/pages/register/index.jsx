@@ -5,10 +5,9 @@ import { AuthContext } from "../../providers/authContextProvider";
 
 const Register = () => {
   const [inputValue, setInputValue] = useState({
-    email: "",
+    username: "",
     password: "",
-    name: "",
-    avatar: "",
+    firstName: "",
   });
   const { logIn, signUp } = useContext(AuthContext);
 
@@ -30,12 +29,12 @@ const Register = () => {
               <input
                 className="w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none"
                 type="text"
-                name="name"
-                id="name"
-                placeholder="username"
-                value={inputValue.name}
+                name="firstName"
+                id="firstName"
+                placeholder="firstName"
+                value={inputValue.firstName}
                 onChange={(e) =>
-                  setInputValue({ ...inputValue, name: e.target.value })
+                  setInputValue({ ...inputValue, firstName: e.target.value })
                 }
               />
             </div>
@@ -44,17 +43,17 @@ const Register = () => {
                 className="text-gray-800 font-semibold block my-3 text-md"
                 htmlFor="email"
               >
-                Email
+                Username
               </label>
               <input
                 className="w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none"
                 type="text"
-                name="email"
-                id="email"
-                placeholder="@email"
-                value={inputValue.email}
+                name="username"
+                id="username"
+                placeholder="username"
+                value={inputValue.username}
                 onChange={(e) => {
-                  setInputValue({ ...inputValue, email: e.target.value });
+                  setInputValue({ ...inputValue, username: e.target.value });
                 }}
               />
             </div>
@@ -88,7 +87,6 @@ const Register = () => {
                   inputValue.password,
                   inputValue.avatar
                 );
-                console.log(inputValue);
               }}
             >
               Register

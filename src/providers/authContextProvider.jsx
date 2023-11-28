@@ -2,26 +2,22 @@
 
 import { createContext, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
-import axios from "axios";
 import { useNavigate } from "react-router";
+import Api from "../utils/Api";
 
 export const AuthContext = createContext();
 
 const AuthContextProvider = ({ children }) => {
   const [auth, setAuth] = useLocalStorage("auth", { token: null });
   const navigate = useNavigate();
-  async function signUp(name, email, password, avatar) {
+  async function signUp(firstName, username, password) {
     try {
-      const userData = await axios.post(
-        "https://api.escuelajs.co/api/v1/users/",
-        {
-          name: name,
-          email: email,
-          password: password,
-          avatar: "https://picsum.photos/800",
-        }
-      );
-
+      const userData = await Api.post("/users/add", {
+        firstName: firstName,
+        username: username,
+        password: password,
+      });
+      alert(`თქვენ წარმატებით გაიარეთ რეგისტრაცია`);
       console.log(userData.data);
 
       navigate("/login");
@@ -29,29 +25,21 @@ const AuthContextProvider = ({ children }) => {
       console.log("error:", e);
     }
   }
-  async function logIn(email, password) {
+  async function logIn(username, password) {
     try {
-      const tokenRes = await axios({
+      const tokenRes = await Api({
         method: "post",
-        url: " https://api.escuelajs.co/api/v1/auth/login",
+        url: "/auth/login",
         data: {
-          email: email,
+          username: username,
           password: password,
         },
       });
-      console.log("tokenRes", tokenRes);
-      const userRes = await axios({
-        method: "get",
-        url: "https://api.escuelajs.co/api/v1/auth/profile",
-        headers: {
-          Authorization: `Bearer ${tokenRes.data.access_token}`,
-        },
-      });
+
       setAuth({
-        token: tokenRes.data.access_token,
-        user: userRes.data,
+        token: tokenRes.data.token,
+        user: tokenRes.data,
       });
-      console.log(userRes.data);
 
       navigate("/products");
     } catch (e) {

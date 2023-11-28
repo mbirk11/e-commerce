@@ -13,7 +13,7 @@ const Footer = () => {
                 <ul className="list-disc list-inside space-y-8">
                   <li>
                     <NavLink
-                      to={"/"}
+                      to={"/home"}
                       className={({ isActive }) =>
                         isActive
                           ? "text-sky-500"
