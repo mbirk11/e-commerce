@@ -1,32 +1,40 @@
 /** @format */
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import Api from "../utils/Api";
-import { useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
+import useClearParams from "../hooks/useClearParams";
 
 export const CategoryContext = createContext();
-const { category } = useParams;
 
 const CategoryContextProvider = ({ children }) => {
   const [selectedCategoryProducts, setSelectedCategoryProducts] = useState([]);
+  const location = useLocation();
 
-  const onChangeCategory = async (category, limit = 5, skip = 0) => {
-    try {
-      const url = `/products/category/${category}?limit=${limit}&skip=${skip}`;
-      const res = await Api.get(url);
-      setSelectedCategoryProducts(res.data.products);
-      console.log(res.data.products);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const navigateToCategory = useCallback(
+    async (category) => {
+      try {
+        const url = `/products/category/${category}`; // Set your API URL here
+        const res = await Api.get(url);
+        setSelectedCategoryProducts(res.data.products);
+        console.log(res.data.products);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [setSelectedCategoryProducts]
+  );
+  const categoryParams = new URLSearchParams(location.search);
+  const categoryQuery = categoryParams.get("q");
   useEffect(() => {
-    if (category) onChangeCategory(category);
-  }, [category]);
+    if (categoryQuery) {
+      navigateToCategory(categoryQuery);
+    }
+  }, [categoryQuery]);
   return (
     <CategoryContext.Provider
       value={{
-        onChangeCategory,
+        navigateToCategory,
         selectedCategoryProducts,
         setSelectedCategoryProducts,
       }}

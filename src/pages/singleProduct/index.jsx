@@ -6,6 +6,7 @@ import Api from "../../utils/Api";
 import Header from "../../components/header";
 import Footer from "../../components/footer";
 import { Link, useParams } from "react-router-dom";
+import useClearParams from "../../hooks/useClearParams";
 
 const SingleProduct = () => {
   const { id } = useParams();

@@ -1,20 +1,29 @@
 /** @format */
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/authContextProvider";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Link, NavLink } from "react-router-dom";
 import Api from "../../utils/Api";
 import { CategoryContext } from "../../providers/categoryContextProvider";
+import useClearParams from "../../hooks/useClearParams";
 
 const Header = () => {
-  const { onChangeCategory, setSelectedCategoryProducts } =
+  const { navigateToCategory, setSelectedCategoryProducts } =
     useContext(CategoryContext);
   const [searchItem, setSearchItem] = useState("");
-  const { authToken, logOut } = useContext(AuthContext);
   const [dropdown, setDropdown] = useState(false);
+  const { authToken, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
   const toggleDropDown = () => {
     setDropdown(!dropdown);
+  };
+  const handleCategoryClick = async (category) => {
+    try {
+      await navigateToCategory(category); // Fetches data for the clicked category
+      navigate(`/products?q=${category}`); // Update URL after fetching data
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const { isAuthed, user } = authToken;
@@ -49,6 +58,7 @@ const Header = () => {
     fetchCategories();
   }, []);
   const indexToShow = [0, 1, 2, 6, 16, 17, 18, 19]; //სასურველი კატეგორიის ჩვენება
+  useClearParams();
 
   // useEffect(() => {
   //   if (searchItem) {
@@ -125,7 +135,7 @@ const Header = () => {
                         : "flex items-center cursor-pointer gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
                     }
                     onClick={() => {
-                      onChangeCategory(category);
+                      handleCategoryClick(category);
                     }}
                   >
                     {category}
@@ -215,7 +225,7 @@ const Header = () => {
                     : "cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-700"
                 }
                 onClick={() => {
-                  onChangeCategory(categories[index], 2, 0);
+                  handleCategoryClick(categories[index]);
                 }}
               >
                 {categories[index]}

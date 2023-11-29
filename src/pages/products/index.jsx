@@ -6,15 +6,18 @@ import Header from "../../components/header";
 import Api from "../../utils/Api";
 import { Link, useLocation } from "react-router-dom";
 import { CategoryContext } from "../../providers/categoryContextProvider";
+import useClearParams from "../../hooks/useClearParams";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const location = useLocation();
   const [currentPage, setCurrentPage] = useState({
     limit: 10,
     skip: 0,
   });
+  const location = useLocation();
+
   const { selectedCategoryProducts } = useContext(CategoryContext);
+
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => ({
       ...prevPage,
@@ -48,12 +51,11 @@ const Products = () => {
       console.error(e);
     }
   }
-
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuary = searchParams.get("q");
   useEffect(() => {
-    const searchData = new URLSearchParams(location.search);
-    const queryParam = searchData.get("q");
-    fetchProducts(queryParam, currentPage);
-  }, [location.search, currentPage.skip, selectedCategoryProducts]);
+    fetchProducts(searchQuary, currentPage);
+  }, [searchQuary, currentPage.skip, selectedCategoryProducts]);
 
   return (
     <>
