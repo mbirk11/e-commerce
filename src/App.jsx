@@ -12,26 +12,31 @@ import AuthContextProvider from "./providers/authContextProvider";
 import Register from "./pages/register";
 import UserProfile from "./pages/profile/userProfile";
 import SingleProduct from "./pages/singleProduct";
-import CategoryContextProvider from "./providers/categoryContextProvider";
+import Cart from "./pages/cart";
+import ProductContextProvider from "./providers/ProductContext";
+import CartcontextProvider from "./providers/CartcontextProvider";
 
 function App() {
   return (
     <AuthContextProvider>
-      <CategoryContextProvider>
-        <Routes>
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/home" element={<Home />} />
+      <ProductContextProvider>
+        <CartcontextProvider>
+          <Routes>
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/home" element={<Home />} />
 
-          <Route path="/" element={<ProtectedRouts />}>
-            <Route path="user/:id" element={<UserProfile />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<SingleProduct />} />
-          </Route>
-        </Routes>
-      </CategoryContextProvider>
+            <Route path="/" element={<ProtectedRouts />}>
+              <Route path="user/:id" element={<UserProfile />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<SingleProduct />} />
+              <Route path="/products/cart" element={<Cart />} />{" "}
+            </Route>
+          </Routes>
+        </CartcontextProvider>
+      </ProductContextProvider>
     </AuthContextProvider>
   );
 }

@@ -1,29 +1,35 @@
 /** @format */
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/authContextProvider";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { Link, NavLink } from "react-router-dom";
 import Api from "../../utils/Api";
-import { CategoryContext } from "../../providers/categoryContextProvider";
-import useClearParams from "../../hooks/useClearParams";
+import { ProductContext } from "../../providers/ProductContext";
+import { cartContext } from "../../providers/CartcontextProvider";
 
 const Header = () => {
-  const { navigateToCategory, setSelectedCategoryProducts } =
-    useContext(CategoryContext);
+  const { cartItem } = useContext(cartContext);
+  const { fetchProducts } = useContext(ProductContext);
+  const { authToken, logOut } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+  const [active, setActive] = useState(null);
   const [searchItem, setSearchItem] = useState("");
   const [dropdown, setDropdown] = useState(false);
-  const { authToken, logOut } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const indexToShow = [0, 1, 2, 6, 16, 17, 18, 19]; //სასურველი კატეგორიის ჩვენება
+
   const toggleDropDown = () => {
     setDropdown(!dropdown);
   };
-  const handleCategoryClick = async (category) => {
-    try {
-      await navigateToCategory(category); // Fetches data for the clicked category
-      navigate(`/products?q=${category}`); // Update URL after fetching data
-    } catch (error) {
-      console.error(error);
-    }
+  const toggleCart = () => {
+    navigate("/products/cart");
+  };
+
+  const handleCategoryClick = async (categoryQuery) => {
+    setActive(categoryQuery);
+    await fetchProducts(categoryQuery, "");
+    navigate(`/products?category=${categoryQuery}`);
   };
 
   const { isAuthed, user } = authToken;
@@ -35,20 +41,20 @@ const Header = () => {
   const onSearch = async () => {
     try {
       const response = await Api(`/products/search?q=${searchItem}`);
+      setSearchItem("");
       navigate(`/products?q=${searchItem}`);
-      setSelectedCategoryProducts(response.data.products);
+      fetchProducts(searchItem);
       console.log(response.data.products);
     } catch (error) {
       console.error(error);
     }
   };
   //კატეგორიების წამოღება
-  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     async function fetchCategories() {
       try {
         const response = await Api(`/products/categories/`);
-
         const productsCategories = response.data;
         setCategories(productsCategories);
       } catch (e) {
@@ -57,14 +63,6 @@ const Header = () => {
     }
     fetchCategories();
   }, []);
-  const indexToShow = [0, 1, 2, 6, 16, 17, 18, 19]; //სასურველი კატეგორიის ჩვენება
-  useClearParams();
-
-  // useEffect(() => {
-  //   if (searchItem) {
-  //     handleSearch();
-  //   }
-  // }, [searchItem]);
 
   const handleAuth = () => {
     if (isAuthed) {
@@ -99,51 +97,7 @@ const Header = () => {
             </div>
           </Link>
           <div className="ml-6 flex flex-1 gap-x-3">
-            <div className="ml-6 flex flex-1 gap-x-3 relative">
-              <div
-                onClick={toggleDropDown}
-                className="flex cursor-pointer select-none items-center gap-x-2 rounded-md border bg-[#4094F7] py-2 px-4 text-white hover:bg-blue-500"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-                <span className="text-sm font-medium">Categories</span>
-              </div>
-
-              <div
-                className={`hs-dropdown-menu absolute top-full left-0 ${
-                  dropdown ? "opacity-100 visible" : "opacity-0 invisible"
-                } bg-white shadow-md rounded-lg p-2 mt-2 z-10 dark:bg-gray-800 dark:border dark:border-gray-700`}
-              >
-                {categories.map((category, index) => (
-                  <NavLink
-                    key={index}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "flex items-center cursor-pointer gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
-                        : "flex items-center cursor-pointer gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
-                    }
-                    onClick={() => {
-                      handleCategoryClick(category);
-                    }}
-                  >
-                    {category}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-
+            {/* //categories */}
             <input
               type="text"
               className="w-full rounded-md border border-[#DDE2E4] px-3 py-2 text-sm"
@@ -153,13 +107,8 @@ const Header = () => {
               }}
             />
             <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md border py-2 px-4 hover:bg-gray-100">
-              <Link to={`/products?q=${searchItem}`}>
-                <button
-                  className="text-sm font-medium"
-                  onClick={() => {
-                    onSearch;
-                  }}
-                >
+              <Link>
+                <button className="text-sm font-medium" onClick={onSearch}>
                   Search
                 </button>
               </Link>
@@ -177,10 +126,12 @@ const Header = () => {
                   <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
                 </svg>
                 <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 p-2 text-xs text-white">
-                  3
+                  {cartItem.length}
                 </span>
               </div>
-              <span className="text-sm font-medium">Cart</span>
+              <span className="text-sm font-medium" onClick={toggleCart}>
+                Cart
+              </span>
             </div>
 
             <div className="ml-2 flex cursor-pointer items-center gap-x-1 rounded-md  py-2 px-4 hover:bg-gray-100">
@@ -217,12 +168,11 @@ const Header = () => {
           <div className="flex gap-x-8">
             {indexToShow.map((index) => (
               <NavLink
-                // to={`/products/${categories[index]}`}
                 key={index}
-                className={({ isActive }) =>
-                  isActive
-                    ? "cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100"
-                    : "cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-700"
+                className={
+                  active === categories[index]
+                    ? ""
+                    : "cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100"
                 }
                 onClick={() => {
                   handleCategoryClick(categories[index]);
@@ -231,6 +181,50 @@ const Header = () => {
                 {categories[index]}
               </NavLink>
             ))}
+            <div className="ml-6 flex flex-1 gap-x-3 relative">
+              <div
+                onClick={toggleDropDown}
+                className="flex cursor-pointer select-none items-center gap-x-2 rounded-md border bg-[#4094F7] py-2 px-4 text-white hover:bg-blue-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+                <span className="text-sm font-medium">More Categories</span>
+              </div>
+
+              <div
+                className={`hs-dropdown-menu absolute top-full left-0 ${
+                  dropdown ? "opacity-100 visible" : "opacity-0 invisible"
+                } bg-white shadow-md rounded-lg p-2 mt-2 z-10 dark:bg-gray-800 dark:border dark:border-gray-700`}
+              >
+                {categories.map((category, index) => (
+                  <NavLink
+                    key={index}
+                    className={
+                      active === categories[index]
+                        ? ""
+                        : "flex items-center cursor-pointer gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700"
+                    }
+                    onClick={() => {
+                      handleCategoryClick(category);
+                    }}
+                  >
+                    {category}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           </div>
 
           <span className="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">
