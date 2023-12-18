@@ -1,49 +1,72 @@
 /** @format */
 
-import React, { createContext, useContext, useEffect } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import React, { createContext, useContext, useState } from "react";
 
 import { useNavigate } from "react-router";
 import { ProductContext } from "./ProductContext";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export const cartContext = createContext();
 
 const CartcontextProvider = ({ children }) => {
-  const { products, setActive } = useContext(ProductContext);
+  const { products } = useContext(ProductContext);
 
   const navigate = useNavigate();
-  const [cartItem, setCartItem] = useLocalStorage("cartItem", []);
+  const [cartItems, setCartItems] = useLocalStorage("cartitem", []);
 
   const deleteItemFromCart = (itemId) => {
-    const newCartData = cartItem.filter((item) => item.id !== itemId);
-    setCartItem(newCartData);
+    const newCartData = cartItems.filter((item) => item.id !== itemId);
+    setCartItems(newCartData);
   };
   const handleSinglePage = (itemId) => {
     navigate(`/products/${itemId}`);
   };
-  const handleAddCart = (productId) => {
-    // Check if the productId is already in the cart
-    const isProductInCart = cartItem.some((item) => item.id === productId);
-    setActive(productId);
-    // If the product is not in the cart, add it
+  const handleAddCart = (product) => {
+    const isProductInCart = cartItems.find((item) => item.id === product.id);
+
     if (!isProductInCart) {
-      const productToAdd = products.find((item) => item.id === productId);
-      if (productToAdd) {
-        setCartItem([...cartItem, productToAdd]); // Update the cart items in context
-      }
+      setCartItems([...cartItems, { ...product, qty: 1 }]);
+    } else {
+      setCartItems(
+        cartItems.map((item) => {
+          if (item.id === product.id) return { ...item, qty: item.qty + 1 };
+        })
+      );
     }
   };
-  const productsQty = () => {
-    const itemInStock = cartItem.map((item) => item.stock);
+
+  const incItemQty = (itemId) => {
+    setCartItems(
+      cartItems.map((item) => {
+        if (item.id === itemId) {
+          return { ...item, qty: item.qty + 1 };
+        }
+        return item;
+      })
+    );
   };
+
+  const decItemQty = (itemId) => {
+    setCartItems(
+      cartItems.map((item) => {
+        if (item.id === itemId && item.qty > 0) {
+          return { ...item, qty: item.qty - 1 };
+        }
+        return item;
+      })
+    );
+  };
+
   return (
     <cartContext.Provider
       value={{
-        cartItem,
-        setCartItem,
+        cartItems,
+        setCartItems,
         deleteItemFromCart,
         handleSinglePage,
         handleAddCart,
+        incItemQty,
+        decItemQty,
       }}
     >
       {children}

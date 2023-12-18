@@ -7,16 +7,16 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import { Link, useParams } from "react-router-dom";
 import { cartContext } from "../../providers/CartcontextProvider";
-import { ProductContext } from "../../providers/ProductContext";
 import Rating from "../../components/raiting";
+import Products from "../products";
 
 const SingleProduct = () => {
   const { id } = useParams();
-  const { active } = useContext(ProductContext);
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState("");
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
-  const { handleAddCart } = useContext(cartContext);
+  const { handleAddCart, cartItems, incItemQty, decItemQty } =
+    useContext(cartContext);
 
   const handlepPrevImage = () => {
     setCurrentImgIndex((prevIndex) =>
@@ -43,9 +43,10 @@ const SingleProduct = () => {
         console.error("User Data fetching error:", error);
       }
     }
-
+    console.log("Cart Items:", cartItems); // Log cartItems here
     fetchData();
   }, [id]);
+  const currentProduct = cartItems.find((item) => item.id === product.id);
 
   return (
     <div>
@@ -132,7 +133,7 @@ const SingleProduct = () => {
                       {product.title}
                     </h2>
                     <div className="flex flex-wrap items-center mb-6">
-                      <Rating></Rating>
+                      <Rating product={product.rating} />
                       <Link
                         className="mb-4 text-xs underline hover:text-sky-600 dark:text-gray-400 dark:hover:text-gray-300 lg:mb-0"
                         to={product.thumbnail}
@@ -173,15 +174,29 @@ const SingleProduct = () => {
                       <div className="w-28">
                         <div className="relative flex flex-row w-full h-10 bg-transparent rounded-lg">
                           <button className="w-20 h-full text-gray-600 bg-gray-100 border-r rounded-l outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-300">
-                            <span className="m-auto text-2xl font-thin">-</span>
+                            <span
+                              className="m-auto text-2xl font-thin"
+                              onClick={() => decItemQty(product.id)}
+                            >
+                              -
+                            </span>
                           </button>
                           <input
                             type="number"
                             className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-100 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
-                            placeholder="1"
+                            value={currentProduct ? currentProduct.qty : 0}
+                            onChange={(e) => {
+                              e.target.value;
+                            }}
                           />
+
                           <button className="w-20 h-full text-gray-600 bg-gray-100 border-l rounded-r outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-300">
-                            <span className="m-auto text-2xl font-thin">+</span>
+                            <span
+                              className="m-auto text-2xl font-thin"
+                              onClick={() => incItemQty(product.id)}
+                            >
+                              +
+                            </span>
                           </button>
                         </div>
                       </div>
@@ -201,15 +216,19 @@ const SingleProduct = () => {
                       </button>
                     </div>
                     <a
-                      onClick={() => handleAddCart(product.id)}
                       href="#"
+                      onClick={() => {
+                        if (!cartItems.some((item) => item.id === product.id)) {
+                          handleAddCart(product);
+                        }
+                      }}
                       className={
-                        active === product.id
+                        cartItems.find((item) => item.id === product.id)
                           ? ""
                           : "w-full px-4 py-3 text-center text-sky-600 bg-sky-100 border border-sky-600 dark:hover:bg-gray-900 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-700 hover:bg-sky-600 hover:text-gray-100 lg:w-1/2 rounded-xl"
                       }
                     >
-                      {active === product.id
+                      {cartItems.find((item) => item.id === product.id)
                         ? "Already In Cart"
                         : "Add To Cart"}
                     </a>

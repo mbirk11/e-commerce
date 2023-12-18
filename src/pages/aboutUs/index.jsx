@@ -7,7 +7,7 @@ const AboutUs = () => {
   return (
     <>
       <Header />
-      <div>AboutUs</div>
+
       <Footer />
     </>
   );

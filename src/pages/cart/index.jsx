@@ -6,9 +6,20 @@ import Header from "../../components/header";
 import { cartContext } from "../../providers/CartcontextProvider";
 
 const Cart = () => {
-  const { cartItem, deleteItemFromCart, handleSinglePage } =
-    useContext(cartContext);
-  const subTotal = cartItem.reduce((total, item) => total + item.price, 0);
+  const {
+    cartItems,
+    deleteItemFromCart,
+    handleSinglePage,
+    decItemQty,
+    incItemQty,
+  } = useContext(cartContext);
+
+  console.log("cartItems", cartItems);
+
+  const subTotal = cartItems.reduce(
+    (total, item) => total + item.price * item.qty,
+    0
+  );
   const shipingrate = 7;
   const total = subTotal + shipingrate;
   return (
@@ -16,9 +27,9 @@ const Cart = () => {
       <Header />
       <div className="h-screen bg-gray-100 pt-20">
         <h1 className="mb-10 text-center text-2xl font-bold">Cart Items</h1>
-        <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
+        <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0 bg-gray-100">
           <div className="rounded-lg md:w-2/3">
-            {cartItem.map((item) => (
+            {cartItems.map((item) => (
               <div
                 key={item.id}
                 className="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start"
@@ -41,20 +52,24 @@ const Cart = () => {
                   </div>
                   <div className="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
                     <div className="flex items-center border-gray-100">
-                      <span className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50">
+                      <span
+                        className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50"
+                        onClick={() => decItemQty(item.id)}
+                      >
                         -
                       </span>
                       <input
                         className="h-8 w-8 border bg-white text-center text-xs outline-none"
                         type="number"
-                        value={1}
+                        value={item.qty}
                         onChange={(e) => {
                           e.target.value;
                         }}
-                        min="1"
-                        max={""}
                       />
-                      <span className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50">
+                      <span
+                        className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50"
+                        onClick={() => incItemQty(item.id)}
+                      >
                         +
                       </span>
                     </div>
