@@ -56,6 +56,13 @@ const CartcontextProvider = ({ children }) => {
       })
     );
   };
+  const totalQuantity = cartItems.reduce((total, currentItem) => {
+    if (currentItem.qty !== undefined) {
+      return total + currentItem.qty;
+    } else {
+      return total;
+    }
+  }, 0);
 
   return (
     <cartContext.Provider
@@ -67,6 +74,7 @@ const CartcontextProvider = ({ children }) => {
         handleAddCart,
         incItemQty,
         decItemQty,
+        totalQuantity,
       }}
     >
       {children}

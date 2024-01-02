@@ -2,64 +2,36 @@
 
 import { useEffect, useState } from "react";
 import Api from "../utils/Api";
+import useCategoryFetch from "./useCategoryFetch";
 
 const useGetUniqueCategoriesWithImages = () => {
-  const [uniqueCategoriesWithImages, setUniqueCategoriesWithImages] = useState(
-    []
-  );
+  const { categories } = useCategoryFetch();
+  const [uniqueCategories, setUniqueCategories] = useState({});
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function fetchAllProducts() {
+    async function fetchData() {
       try {
-        const limit = 30;
-        let skip = 0;
-        const products = [];
-
-        while (products.length < 100) {
-          const res = await Api(`/products?limit=${limit}&skip=${skip}`);
-          products.push(...res.data.products);
-          skip += limit;
-        }
-
-        const uniqueCategories = [
-          ...new Set(products.map((product) => product.category)),
-        ];
-        const categoryImages = {};
-
-        uniqueCategories.forEach((category) => {
-          const categoryProducts = products.filter(
-            (product) => product.category === category
-          );
-          const firstImage =
-            categoryProducts.length > 0 ? categoryProducts[0].images[0] : null;
-          categoryImages[category] = firstImage;
+        const response = await Api("/products?limit=100");
+        const products = response.data.products;
+        const uniqueCategoriesData = {};
+        products.forEach((product) => {
+          const { category, images } = product;
+          if (category && images && !uniqueCategoriesData[category]) {
+            uniqueCategoriesData[category] = images[0];
+          }
         });
 
-        const unicCatWithImg = Object.entries(categoryImages).map(
-          ([category, image]) => ({
-            category,
-            image,
-          })
-        );
-
-        if (isMounted) {
-          setUniqueCategoriesWithImages(unicCatWithImg);
-        }
-      } catch (e) {
-        console.log(e);
+        setUniqueCategories(uniqueCategoriesData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
     }
-
-    fetchAllProducts();
-
-    return () => {
-      isMounted = false;
-    };
+    console.log("uniq", uniqueCategories);
+    fetchData();
   }, []);
-
-  return { uniqueCategoriesWithImages };
+  const homeCategory = Object.keys(uniqueCategories);
+  const homeImages = Object.values(uniqueCategories);
+  return { homeCategory, homeImages };
 };
 
 export default useGetUniqueCategoriesWithImages;

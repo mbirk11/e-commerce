@@ -9,7 +9,7 @@ import { cartContext } from "../../providers/CartcontextProvider";
 import useCategoryFetch from "../../hooks/useCategoryFetch";
 
 const Header = () => {
-  const { cartItems } = useContext(cartContext);
+  const { totalQuantity } = useContext(cartContext);
   const navigate = useNavigate();
   const { fetchProducts } = useContext(ProductContext);
   const { authToken, logOut } = useContext(AuthContext);
@@ -27,10 +27,6 @@ const Header = () => {
   const toggleCart = () => {
     navigate("/products/cart");
   };
-  const totalQuantity = cartItems.reduce(
-    (total, currentItem) => total + currentItem.qty,
-    0
-  );
 
   const { isAuthed, user } = authToken;
   const userName = user ? user.username : "";

@@ -5,29 +5,28 @@ import Footer from "../../components/footer";
 import Header from "../../components/header";
 import useCategoryFetch from "../../hooks/useCategoryFetch";
 
-import Shownavigation from "../../components/navigation";
+import Shownavigation from "../../components/Navigation";
 
 import useGetUniqueCategoriesWithImages from "../../hooks/useGetImageByCategory";
 import { useContext } from "react";
 import { ProductContext } from "../../providers/ProductContext";
+import { Link } from "react-router-dom";
+import { cartContext } from "../../providers/CartcontextProvider";
 
 const Home = () => {
   const navigate = useNavigate();
   const { fetchProducts, products } = useContext(ProductContext);
-  const { handleCategoryClick } = useCategoryFetch(fetchProducts, navigate);
-
+  const { handleCategoryClick, categories } = useCategoryFetch(
+    fetchProducts,
+    navigate
+  );
+  const { handleAddCart, cartItems } = useContext(cartContext);
   const handleDrawerToggle = () => {
     const drawer = document.getElementById("drawer-right-example");
     drawer.classList.toggle("translate-x-full");
   };
-  const { uniqueCategoriesWithImages } = useGetUniqueCategoriesWithImages();
-  const urlImg = Object.values(uniqueCategoriesWithImages).map(
-    (categoryData) => categoryData.image
-  );
-  const productsCategory = Object.values(uniqueCategoriesWithImages).map(
-    (product) => product.category
-  );
-  console.log(uniqueCategoriesWithImages);
+
+  const { homeCategory, homeImages } = useGetUniqueCategoriesWithImages();
 
   return (
     <>
@@ -92,21 +91,26 @@ const Home = () => {
 
               {/* Drawer content */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {Object.values(uniqueCategoriesWithImages).map((data, i) => (
-                  <div className="relative" key={i}>
-                    <img
-                      className="h-auto max-w-full rounded-lg"
-                      src={data.image}
-                      alt="imagies"
-                    />
+                {categories.map((category) => (
+                  <div className="relative  " key={category}>
+                    <div className="border border-gray-300 rounded-lg overflow-hidden h-full  ">
+                      <img
+                        className="h-auto max-w-full rounded-lg p-4"
+                        src={`/categoryPNG/${category}.png`}
+                        alt="imagies"
+                      />
+                      <span className="text-gray-300 text-sm block text-center h-full w-full py-2  ">
+                        {category}
+                      </span>
+                    </div>
                     <div
                       onClick={() => {
-                        handleCategoryClick(data.category);
+                        handleCategoryClick(category);
                       }}
-                      className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black bg-opacity-75 rounded-lg"
+                      className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity bg-black bg-opacity-75 rounded-lg hover:opacity-100"
                     >
                       <p className="text-white text-center cursor-pointer">
-                        {data.category}
+                        {category}
                       </p>
                     </div>
                   </div>
@@ -119,17 +123,17 @@ const Home = () => {
               href="#"
               className="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-80"
             >
+              {" "}
               <img
-                onClick={() => handleCategoryClick(productsCategory[19])}
-                src={urlImg[19]}
+                onClick={() => handleCategoryClick(homeCategory[19])}
+                src={homeImages[19]}
                 alt="Image"
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
               />
-
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"></div>
               <span className="relative ml-4 mb-3 inline-block text-sm text-white md:ml-5 md:text-lg">
-                Liting
+                {homeCategory[19]}
               </span>
             </a>
 
@@ -138,8 +142,8 @@ const Home = () => {
               className="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:col-span-2 md:h-80"
             >
               <img
-                src={urlImg[1]}
-                onClick={() => handleCategoryClick(productsCategory[1])}
+                src={homeImages[1]}
+                onClick={() => handleCategoryClick(homeCategory[1])}
                 loading="lazy"
                 alt="Photo by Magicle"
                 className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
@@ -147,7 +151,7 @@ const Home = () => {
 
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"></div>
               <span className="relative ml-4 mb-3 inline-block text-sm text-white md:ml-5 md:text-lg">
-                Laptops
+                {homeCategory[1]}
               </span>
             </a>
             <a
@@ -155,8 +159,8 @@ const Home = () => {
               className="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:col-span-2 md:h-80"
             >
               <img
-                onClick={() => handleCategoryClick(productsCategory[0])}
-                src={urlImg[0]}
+                onClick={() => handleCategoryClick(homeCategory[0])}
+                src={homeImages[0]}
                 loading="lazy"
                 alt="Photo by Magicle"
                 className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
@@ -164,7 +168,7 @@ const Home = () => {
 
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"></div>
               <span className="relative ml-4 mb-3 inline-block text-sm text-white md:ml-5 md:text-lg">
-                Smartphones
+                {homeCategory[0]}
               </span>
             </a>
 
@@ -173,8 +177,8 @@ const Home = () => {
               className="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-80"
             >
               <img
-                onClick={() => handleCategoryClick(productsCategory[5])}
-                src={urlImg[5]}
+                onClick={() => handleCategoryClick(homeCategory[5])}
+                src={homeImages[5]}
                 loading="lazy"
                 alt="Photo by Lorenzo Herrera"
                 className=" flex-1 absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
@@ -182,122 +186,21 @@ const Home = () => {
 
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"></div>
               <span className="relative ml-4 mb-3 inline-block text-sm text-white md:ml-5 md:text-lg">
-                Home Decoration
+                {homeCategory[5]}
               </span>
             </a>
           </div>
         </div>
       </div>
       {/* Latest Products */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* First Column */}
-        {/* <div className="grid gap-4">
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg"
-              alt=""
-            />
-          </div>
-        </div> */}
-
-        {/* Second Column */}
-        {/* <div className="grid gap-4">
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg"
-              alt=""
-            />
-          </div>
-
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg"
-              alt=""
-            />
-          </div>
-        </div> */}
-
-        {/* Third Column */}
-        {/* <div className="grid gap-4">
-          <div>
-          
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-6.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-8.jpg"
-              alt=""
-            />
-          </div>
-        </div> */}
-
-        {/* Fourth Column */}
-        {/* <div className="grid gap-4">
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-9.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-10.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-11.jpg"
-              alt=""
-            />
-          </div>
-        </div> */}
-      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
 
       <div className="bg-gray-100 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-gray-600 mb-8">
             Introducing Our Latest Product
           </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {products.slice(5, 8).map((product, i) => (
               <div key={i} className="bg-white rounded-lg shadow-lg p-8">
@@ -307,16 +210,28 @@ const Home = () => {
                     src={product.images[3]}
                     alt="Product 3"
                   />
+
                   <div className="absolute inset-0 bg-black opacity-40"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300">
-                      View Product
-                    </button>
+                    <Link to={`/products/${product.id}`}>
+                      <button className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300">
+                        View Product
+                      </button>
+                    </Link>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mt-4">
+
+                <h3
+                  onClick={() =>
+                    cartItems.some((item) => item.id === product.id)
+                      ? navigate("products/cart")
+                      : ""
+                  }
+                  className="text-xl font-bold text-gray-900 mt-4 cursor-pointer"
+                >
                   {product.title}
                 </h3>
+
                 <p className="text-gray-500 text-sm mt-2">
                   {product.description}
                 </p>
@@ -324,8 +239,22 @@ const Home = () => {
                   <span className="text-gray-900 font-bold text-lg">
                     ${product.price}
                   </span>
-                  <button className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800">
-                    Add to Cart
+
+                  <button
+                    className={
+                      cartItems.some((item) => item.id === product.id)
+                        ? "bg-red-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800"
+                        : "bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800"
+                    }
+                    onClick={() => {
+                      if (!cartItems.some((item) => item.id === product.id)) {
+                        handleAddCart(product);
+                      }
+                    }}
+                  >
+                    {cartItems.some((item) => item.id === product.id)
+                      ? " Already In Cart"
+                      : " Add to Cart"}
                   </button>
                 </div>
               </div>
