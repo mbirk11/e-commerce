@@ -6,9 +6,10 @@ import Header from "../../components/header";
 import { Link } from "react-router-dom";
 
 import { ProductContext } from "../../providers/ProductContext";
-import { cartContext } from "../../providers/CartcontextProvider";
+
 import CustomPagination from "../../components/pagination";
-import Shownavigation from "../../components/Navigation";
+import Shownavigation from "../../components/navigation";
+import { cartContext } from "../../providers/CartContextProvider";
 
 const Products = () => {
   const {

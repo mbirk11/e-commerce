@@ -5,13 +5,13 @@ import Footer from "../../components/footer";
 import Header from "../../components/header";
 import useCategoryFetch from "../../hooks/useCategoryFetch";
 
-import Shownavigation from "../../components/Navigation";
+import Shownavigation from "../../components/navigation";
 
 import useGetUniqueCategoriesWithImages from "../../hooks/useGetImageByCategory";
 import { useContext } from "react";
 import { ProductContext } from "../../providers/ProductContext";
 import { Link } from "react-router-dom";
-import { cartContext } from "../../providers/CartcontextProvider";
+import { cartContext } from "../../providers/CartContextProvider";
 
 const Home = () => {
   const navigate = useNavigate();
