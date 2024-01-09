@@ -5,11 +5,10 @@ import Footer from "../../components/footer";
 import Header from "../../components/header";
 import { Link } from "react-router-dom";
 
-import { ProductContext } from "../../providers/productContext";
-
 import CustomPagination from "../../components/pagination";
 import Shownavigation from "../../components/navigation";
 import { cartContext } from "../../providers/cartContextProvider";
+import { productContext } from "../../providers/productContext";
 
 const Products = () => {
   const {
@@ -18,7 +17,7 @@ const Products = () => {
     handlePageChange,
     filteredProducts,
     sortedProducts,
-  } = useContext(ProductContext);
+  } = useContext(productContext);
   console.log("filtered", filteredProducts);
 
   const { handleAddCart, cartItems } = useContext(cartContext);

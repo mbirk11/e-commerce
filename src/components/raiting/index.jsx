@@ -1,10 +1,10 @@
 /** @format */
 
 import React, { useContext, useState } from "react";
-import { ProductContext } from "../../providers/productContext";
+import { productContext } from "../../providers/productContext";
 
 const Rating = () => {
-  const { products } = useContext(ProductContext);
+  const { products } = useContext(productContext);
   const rating = products.map((item) => item.rating);
 
   const [hoverRating, setHoverRating] = useState(0);

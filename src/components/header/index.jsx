@@ -4,14 +4,15 @@ import { AuthContext } from "../../providers/authContextProvider";
 import { useNavigate } from "react-router";
 import { Link, NavLink } from "react-router-dom";
 import Api from "../../utils/Api";
-import { ProductContext } from "../../providers/productContext";
+
 import { cartContext } from "../../providers/cartContextProvider";
 import useCategoryFetch from "../../hooks/useCategoryFetch";
+import { productContext } from "../../providers/productContext";
 
 const Header = () => {
   const { totalQuantity } = useContext(cartContext);
   const navigate = useNavigate();
-  const { fetchProducts } = useContext(ProductContext);
+  const { fetchProducts } = useContext(productContext);
   const { authToken, logOut } = useContext(AuthContext);
   const { active, categories, handleCategoryClick } = useCategoryFetch(
     fetchProducts,

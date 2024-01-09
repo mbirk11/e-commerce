@@ -1,13 +1,14 @@
 /** @format */
 
 import React, { useContext, useState } from "react";
-import { ProductContext } from "../../providers/productContext";
+
 import Api from "../../utils/Api";
 import { useNavigate } from "react-router";
+import { productContext } from "../../providers/productContext";
 
 const Search = () => {
   const [searchItem, setSearchItem] = useState("");
-  const { fetchProducts } = useContext(ProductContext);
+  const { fetchProducts } = useContext(productContext);
   const navigate = useNavigate();
   // useEffect(() => {
   //   onSearch();

@@ -3,8 +3,7 @@
 import { createContext, useEffect, useState } from "react";
 import Api from "../utils/Api";
 import { useLocation } from "react-router";
-export const ProductContext = createContext();
-export const useProductContext = () => useContext(ProductContext);
+export const productContext = createContext();
 
 const ProductContextProvider = ({ children }) => {
   const location = useLocation();
@@ -86,7 +85,7 @@ const ProductContextProvider = ({ children }) => {
   }, [currentPage, location.search, categoryQuery, totalPage]);
 
   return (
-    <ProductContext.Provider
+    <productContext.Provider
       value={{
         products,
         setProducts,
@@ -106,7 +105,7 @@ const ProductContextProvider = ({ children }) => {
       }}
     >
       <div>{children}</div>
-    </ProductContext.Provider>
+    </productContext.Provider>
   );
 };
 

@@ -2,8 +2,9 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ProductContext } from "../../providers/productContext";
+
 import Search from "../search";
+import { productContext } from "../../providers/productContext";
 
 const Shownavigation = () => {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -13,7 +14,7 @@ const Shownavigation = () => {
     handleChangerange,
     handleCheckboxChange,
     handleClear,
-  } = useContext(ProductContext);
+  } = useContext(productContext);
   const navigate = useNavigate();
   const toggleDrawer = () => {
     setShowDrawer(!showDrawer);

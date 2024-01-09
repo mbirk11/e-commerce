@@ -3,13 +3,14 @@
 import React, { createContext, useContext, useState } from "react";
 
 import { useNavigate } from "react-router";
-import { ProductContext } from "./productContext";
+
 import useLocalStorage from "../hooks/useLocalStorage";
+import { productContext } from "./productContext";
 
 export const cartContext = createContext();
 
 const CartcontextProvider = ({ children }) => {
-  const { products } = useContext(ProductContext);
+  const { products } = useContext(productContext);
 
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useLocalStorage("cartitem", []);

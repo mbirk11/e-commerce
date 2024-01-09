@@ -9,13 +9,14 @@ import Shownavigation from "../../components/navigation";
 
 import useGetUniqueCategoriesWithImages from "../../hooks/useGetImageByCategory";
 import { useContext } from "react";
-import { ProductContext } from "../../providers/productContext";
+
 import { Link } from "react-router-dom";
 import { cartContext } from "../../providers/cartContextProvider";
+import { productContext } from "../../providers/productContext";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { fetchProducts, products } = useContext(ProductContext);
+  const { fetchProducts, products } = useContext(productContext);
   const { handleCategoryClick, categories } = useCategoryFetch(
     fetchProducts,
     navigate
