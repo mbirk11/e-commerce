@@ -1,11 +1,11 @@
 /** @format */
 
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router";
 import Api from "../../utils/Api";
 import { AuthContext } from "../../providers/authContextProvider";
-import ProfileForm from "./UserProfeleForm";
+
 import Header from "../../components/header";
+import ProfileForm from "./UserProfeleForm";
 
 const UserProfile = () => {
   const { authToken } = useContext(AuthContext);

@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router";
 import "./App.css";
 import LogIn from "./pages/logIn";
 import Home from "./pages/home";
-import ProtectedRouts from "./utils/ProtectedRouts";
+import ProtectedRouts from "./utils/protectedRouts";
 import Products from "./pages/products";
 import ContactUs from "./pages/contactUs";
 import AboutUs from "./pages/aboutUs";
@@ -17,8 +17,8 @@ import ProductContextProvider from "./providers/productContext";
 import CartcontextProvider from "./providers/cartContextProvider";
 import Payment from "./payment";
 
-import UserProfile from "./pages/profile/UserProfile";
 import SuccessPayment from "./payment/SuccessPayment";
+import UserProfile from "./pages/profile/UserProfile";
 
 function App() {
   return (
