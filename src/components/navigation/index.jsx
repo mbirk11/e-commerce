@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ProductContext } from "../../providers/ProductContext";
+import { ProductContext } from "../../providers/productContext";
 import Search from "../search";
 
 const Shownavigation = () => {

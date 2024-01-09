@@ -9,7 +9,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Rating from "../../components/raiting";
 import Products from "../products";
-import { cartContext } from "../../providers/CartContextProvider";
+import { cartContext } from "../../providers/cartContextProvider";
 
 const SingleProduct = () => {
   const { id } = useParams();

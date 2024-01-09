@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useContext, useState } from "react";
-import { ProductContext } from "../../providers/ProductContext";
+import { ProductContext } from "../../providers/productContext";
 import Api from "../../utils/Api";
 import { useNavigate } from "react-router";
 

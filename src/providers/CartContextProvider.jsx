@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 import { useNavigate } from "react-router";
-import { ProductContext } from "./ProductContext";
+import { ProductContext } from "./productContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 export const cartContext = createContext();

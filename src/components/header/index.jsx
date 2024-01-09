@@ -4,8 +4,8 @@ import { AuthContext } from "../../providers/authContextProvider";
 import { useNavigate } from "react-router";
 import { Link, NavLink } from "react-router-dom";
 import Api from "../../utils/Api";
-import { ProductContext } from "../../providers/ProductContext";
-import { cartContext } from "../../providers/CartcontextProvider";
+import { ProductContext } from "../../providers/productContext";
+import { cartContext } from "../../providers/cartContextProvider";
 import useCategoryFetch from "../../hooks/useCategoryFetch";
 
 const Header = () => {

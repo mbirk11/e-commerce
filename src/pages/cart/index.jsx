@@ -3,7 +3,7 @@
 import React, { useContext } from "react";
 import "./index.css";
 import Header from "../../components/header";
-import { cartContext } from "../../providers/CartContextProvider";
+import { cartContext } from "../../providers/cartContextProvider";
 import { useNavigate } from "react-router";
 
 const Cart = () => {

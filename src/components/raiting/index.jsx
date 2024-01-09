@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useContext, useState } from "react";
-import { ProductContext } from "../../providers/ProductContext";
+import { ProductContext } from "../../providers/productContext";
 
 const Rating = () => {
   const { products } = useContext(ProductContext);

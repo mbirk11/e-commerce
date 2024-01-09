@@ -5,7 +5,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { creatIntent } from "./backend";
 import { useCallback, useContext, useEffect, useState } from "react";
 import CheckoutForm from "./ChekoutForm";
-import { cartContext } from "../providers/CartContextProvider";
+import { cartContext } from "../providers/cartContextProvider";
 
 const Payment = () => {
   const [intent, setIntent] = useState();

@@ -13,8 +13,8 @@ import Register from "./pages/register";
 
 import SingleProduct from "./pages/singleProduct";
 import Cart from "./pages/cart";
-import ProductContextProvider from "./providers/ProductContext";
-import CartcontextProvider from "./providers/CartContextProvider";
+import ProductContextProvider from "./providers/productContext";
+import CartcontextProvider from "./providers/cartContextProvider";
 import Payment from "./payment";
 import SuccessPayment from "./payment/SuccessPayment";
 import UserProfile from "./pages/profile/UserProfile";
