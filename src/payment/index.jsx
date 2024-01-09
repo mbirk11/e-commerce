@@ -3,8 +3,8 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { creatIntent } from "./backend";
-import { useCallback, useContext, useEffect, useState } from "react";
-import CheckoutForm from "./ChekoutForm";
+import { useContext, useEffect, useState } from "react";
+import CheckoutForm from "./chekoutForm";
 import { cartContext } from "../providers/cartContextProvider";
 
 const Payment = () => {

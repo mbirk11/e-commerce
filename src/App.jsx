@@ -16,8 +16,9 @@ import Cart from "./pages/cart";
 import ProductContextProvider from "./providers/productContext";
 import CartcontextProvider from "./providers/cartContextProvider";
 import Payment from "./payment";
-import SuccessPayment from "./payment/SuccessPayment";
+
 import UserProfile from "./pages/profile/UserProfile";
+import SuccessPayment from "./payment/SuccessPayment";
 
 function App() {
   return (
