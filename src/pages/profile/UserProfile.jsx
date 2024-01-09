@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Api from "../../utils/Api";
 import { AuthContext } from "../../providers/authContextProvider";
-import ProfileForm from "../../components/user/UserProfeleForm";
+import ProfileForm from "./UserProfeleForm";
 import Header from "../../components/header";
 
 const UserProfile = () => {
@@ -12,6 +12,7 @@ const UserProfile = () => {
   const id = authToken.user.id;
 
   const [user, setUser] = useState(null);
+  const [toggle, setToggle] = useState(false);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -41,6 +42,9 @@ const UserProfile = () => {
                 {user.creationAt}
               </div>
               <button
+                onClick={() => {
+                  setToggle(true);
+                }}
                 type="button"
                 className=" mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans"
               >
@@ -49,8 +53,9 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="flex-1 p-20">
-            {" "}
-            <ProfileForm />
+            {toggle ? (
+              <ProfileForm toggle={setToggle} email={user.email} />
+            ) : null}
           </div>
         </div>
       ) : (

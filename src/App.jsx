@@ -10,11 +10,14 @@ import ContactUs from "./pages/contactUs";
 import AboutUs from "./pages/aboutUs";
 import AuthContextProvider from "./providers/authContextProvider";
 import Register from "./pages/register";
-import UserProfile from "./pages/profile/userProfile";
+
 import SingleProduct from "./pages/singleProduct";
 import Cart from "./pages/cart";
 import ProductContextProvider from "./providers/ProductContext";
-import CartcontextProvider from "./providers/CartcontextProvider";
+import CartcontextProvider from "./providers/CartContextProvider";
+import Payment from "./payment";
+import SuccessPayment from "./payment/SuccessPayment";
+import UserProfile from "./pages/profile/UserProfile";
 
 function App() {
   return (
@@ -23,6 +26,7 @@ function App() {
         <CartcontextProvider>
           <Routes>
             <Route path="/login" element={<LogIn />} />
+            <Route path="/success" element={<SuccessPayment />} />
             <Route path="/register" element={<Register />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/about" element={<AboutUs />} />
@@ -32,7 +36,8 @@ function App() {
               <Route path="user/:id" element={<UserProfile />} />
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<SingleProduct />} />
-              <Route path="/products/cart" element={<Cart />} />{" "}
+              <Route path="/products/cart" element={<Cart />} />
+              <Route path="/products/payment" element={<Payment />} />
             </Route>
           </Routes>
         </CartcontextProvider>

@@ -5,15 +5,17 @@ import React, { useContext, useEffect, useState } from "react";
 import Api from "../../utils/Api";
 import Header from "../../components/header";
 import Footer from "../../components/footer";
-import { Link, useParams } from "react-router-dom";
-import { cartContext } from "../../providers/CartcontextProvider";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import Rating from "../../components/raiting";
 import Products from "../products";
+import { cartContext } from "../../providers/CartContextProvider";
 
 const SingleProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState("");
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  const navigate = useNavigate();
 
   const { handleAddCart, cartItems, incItemQty, decItemQty } =
     useContext(cartContext);
@@ -235,6 +237,9 @@ const SingleProduct = () => {
                   </div>
                   <div className="flex gap-4 mb-6">
                     <a
+                      onClick={() => {
+                        navigate("/products/payment");
+                      }}
                       href="#"
                       className="w-full px-4 py-3 text-center text-gray-100 bg-sky-600 border border-transparent dark:border-gray-700 hover:border-sky-500 hover:text-sky-700 hover:bg-sky-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
                     >

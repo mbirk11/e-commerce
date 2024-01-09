@@ -63,6 +63,10 @@ const CartcontextProvider = ({ children }) => {
       return total;
     }
   }, 0);
+  const subTotal = cartItems.reduce(
+    (total, item) => total + item.price * item.qty,
+    0
+  );
 
   return (
     <cartContext.Provider
@@ -75,6 +79,7 @@ const CartcontextProvider = ({ children }) => {
         incItemQty,
         decItemQty,
         totalQuantity,
+        subTotal,
       }}
     >
       {children}

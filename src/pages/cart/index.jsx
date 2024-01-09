@@ -3,7 +3,8 @@
 import React, { useContext } from "react";
 import "./index.css";
 import Header from "../../components/header";
-import { cartContext } from "../../providers/CartcontextProvider";
+import { cartContext } from "../../providers/CartContextProvider";
+import { useNavigate } from "react-router";
 
 const Cart = () => {
   const {
@@ -12,16 +13,12 @@ const Cart = () => {
     handleSinglePage,
     decItemQty,
     incItemQty,
+    subTotal,
   } = useContext(cartContext);
+  const navigate = useNavigate();
 
   console.log("cartItems", cartItems);
 
-  const subTotal = cartItems.reduce(
-    (total, item) => total + item.price * item.qty,
-    0
-  );
-  const shipingrate = 7;
-  const total = subTotal + shipingrate;
   return (
     <>
       <Header />
@@ -102,20 +99,22 @@ const Cart = () => {
               <p className="text-gray-700">Subtotal:</p>
               <p className="text-gray-700">{subTotal.toFixed(2)}$</p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-gray-700">Shipping:</p>
-              <p className="text-gray-700">{shipingrate}$</p>
-            </div>
+
             <hr className="my-4" />
             <div className="flex justify-between">
               <p className="text-lg font-bold">Total</p>
               <div className="">
-                <p className="mb-1 text-lg font-bold">{total}$</p>
+                <p className="mb-1 text-lg font-bold">{subTotal}$</p>
                 <p className="text-sm text-gray-700">including VAT</p>
               </div>
             </div>
 
-            <button className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600">
+            <button
+              onClick={() => {
+                navigate("/products/payment");
+              }}
+              className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600"
+            >
               Buy Now
             </button>
           </div>
